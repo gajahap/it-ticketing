@@ -9,6 +9,7 @@ import MessageModal from '../../Components/MessageModal';
 import Select from 'react-select';
 import Elephant from '../../assets/images/elephant.png';
 import CircularProgressBar from '../../Components/CircularProgressBar/CircularProgressBar';
+import Loading from '../../Components/Loading';
 
 const FormTicketing = () => {
     const [isLoading, setIsLoading] = useState(true);

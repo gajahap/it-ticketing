@@ -5,29 +5,30 @@ import Logo from '../../assets/images/gap.png';
 import axiosInstance from '../../axiosConfig';
 import { useParams } from 'react-router-dom';
 import MessageModal from '../../Components/MessageModal';
+import ErrorHandler from '../../Components/ErrorHandler';
 
 const DetailFormTicketing = () => {
-    const { ticketId } = useParams(); // Ambil nilai ticketId dari URL
+    const { ticketId, token } = useParams(); // Ambil nilai ticketId dari URL
     const [isLoading, setIsLoading] = useState(true);
     const [isButtonLoading, setIsButtonLoading] = useState(false);
-    const [data , setData] = useState([]);
+    const [data , setData] = useState(null);
     const [tooltip,setTooltip] = useState(false);
     const target = useRef(null);
     const [departmentOptions, setDepartmentOptions] = useState([]);
     const [spkbItems, setSpkbItems] = useState(null);
     const [message, setMessage] = useState(null);
     const [showModal, setShowModal] = useState(false); // Control for modal visibility
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [ticketingResponse, departmentsResponse, spkbItmesResponse] = await Promise.all([
-                    axiosInstance.get(`/ticketings/get/${ticketId}`),
+                    axiosInstance.get(`/ticketing/approval/${ticketId}/${token}`),
                     axiosInstance.get('/departments'),
                     axiosInstance.get(`/spkb-items/list/${ticketId}`)
-
                 ]);
-                setData(ticketingResponse.data);
+                setData(ticketingResponse.data.ticketing);
                 
                 const formattedDepartmentOptions = departmentsResponse.data.map(option => ({
                     id: option.id,
@@ -36,10 +37,11 @@ const DetailFormTicketing = () => {
                 setDepartmentOptions(formattedDepartmentOptions)
 
                 setSpkbItems(spkbItmesResponse.data);
-
+                console.log(ticketingResponse.data);
                 setIsLoading(false); // Move this to the finally block
             } catch (error) {
                 console.error(error);
+                setError(error);
                 setIsLoading(false); // Move this to the finally block
             }
         };
@@ -69,6 +71,7 @@ const DetailFormTicketing = () => {
         } catch (error) {
             console.error(error);
             setIsLoading(false); // Move this to the finally block
+            console.error(error);
         }
     };
 
@@ -120,7 +123,11 @@ const DetailFormTicketing = () => {
                     </div>
                 </div>
             ) : (
-                <div style={{ position: 'relative',height: '100vh'}}>
+                <>
+                {error ? (
+                    <ErrorHandler error={error}/>
+                ):(
+                    <div style={{ position: 'relative',height: '100vh'}}>
                     {/* <ToastCustom /> */}
                     <div style={{ overflow: 'hidden', position: 'absolute', width: '100%', height: '100%'}}>
                         <div className="half-circle"></div>
@@ -326,6 +333,10 @@ const DetailFormTicketing = () => {
                             <p style={{ margin: 0, fontSize: '14px', color: '#6c757d'}}>© {new Date().getFullYear()} PT.Gajah Angkasa Perkasa. All Rights Reserved.</p>
                     </footer>
                 </div>
+                )}
+
+                </>
+
             )}
         </>
     );

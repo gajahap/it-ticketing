@@ -9,10 +9,11 @@ function App() {
       <Routes>
         <Route path="/" element={<FormTicketing />} />
         <Route path="/detail-form/:ticketId" element={<DetailFormTicketing />} />
-        <Route path="/approval/:ticketId" element={<ApprovalTicketing />} />
+        <Route path="/approval/:ticketId/:token" element={<ApprovalTicketing />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'http://192.168.2.40:8000/api', // replace with your API base URL
-  timeout: 10000, // request timeout in milliseconds (optional)
+  timeout: 60000, // request timeout in milliseconds (optional)
   headers: {
     'Content-Type': 'multipart/form-data',
   },

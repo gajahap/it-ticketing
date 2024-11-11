@@ -184,3 +184,12 @@ input::-webkit-inner-spin-button {
 .circle.active + .connector {
   background-color: #007bff; /* Warna garis jika progress tercapai */
 }
+
+
+.fade-in {
+  opacity: 0;
+}
+
+.fade-in.visible {
+  opacity: 1;
+}
