@@ -11,3 +11,176 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+button{
+  border-radius: 5px !important;
+  border: none !important;
+}
+
+select:focus,textarea:focus,input:focus{
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #04419c !important;
+}
+
+.btn-primary{
+  background-color: #04419c !important;
+}
+
+.btn-primary:hover{
+  background-color: #2e6cca !important;
+}
+
+.btn-danger{
+  background-color: #d12d27 !important;
+}
+
+.btn-danger:hover{
+  background-color: #da524d !important;
+}
+
+
+.btn-secondary{
+  background-color: #acacac !important;
+}
+
+.btn-secondary:hover{
+  background-color: #cbcbcb !important;
+}
+
+
+.half-circle {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 110vh; /* Double the container height */
+  background: linear-gradient(to top, #04419c, #00a1fe);
+  border-radius: 0 0 100% 100%;
+  z-index: -1;
+  border: solid;
+  border-color: #ff6f16;
+  border-width: 10px;
+}
+
+
+
+
+footer{
+  width: 100%;
+  bottom: 0;
+  background-color: #04419c;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+*{
+  font-size:15px;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.fades{
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+
+.bounce {
+  animation: bounce 2s;
+}
+
+
+.custom-tabs .nav-link {
+  color: #04419c; /* Default color */
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.custom-tabs .nav-link.active {
+  color: #fff;
+  background-color: #04419c; /* Active tab color */
+  border-color: #04419c;
+}
+
+.custom-tabs .nav-link:hover {
+  color: #04419c;
+  background-color: #f0f0f0; /* Hover color */
+}
+
+.bg-radiant-top {
+  background: linear-gradient(to top, #04419c, #00a1fe);
+}
+
+
+.progress-container {
+  display: flex;
+  align-items: center;
+}
+
+.circle-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ddd;
+  color: #333;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.circle.active {
+  background-color: #007bff; /* Warna lingkaran jika progress tercapai */
+  color: #fff;
+}
+
+.connector {
+  width: 50px;
+  height: 4px;
+  background-color: #ddd;
+  margin: 0 5px;
+  transition: background-color 0.3s;
+}
+
+.circle.active + .connector {
+  background-color: #007bff; /* Warna garis jika progress tercapai */
+}
