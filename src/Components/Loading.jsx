@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Image } from 'react-bootstrap';
+import Logo from '../assets/images/gap.png';
 
 const Loading = () => {
-    const [visibleWords, setVisibleWords] = useState([]);
-    const words = ["Wait", "a", "second"];
+    const words = ["We", "are", "preparing", "the", "page", "for", "you"];
+    const [visibleIndex, setVisibleIndex] = useState(0);
 
     useEffect(() => {
-        words.forEach((word, index) => {
-            setTimeout(() => {
-                setVisibleWords((prev) => [...prev, word]);
-            }, index * 700); // waktu jeda antar kata (700ms)
-        });
-    }, []);
+        const intervalId = setInterval(() => {
+            setVisibleIndex((prevIndex) => (prevIndex + 1) % (words.length + 1));
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [words.length]);
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100 bg-light fades">
-            <div style={{ fontSize: '2em', fontWeight: '300', color: '#04419c', display: 'flex', gap: '0.3em' }}>
+        <div className="loading-container">
+            <div style={{ position: 'relative' }}>
+                <Image src={Logo} style={{ width: '3em', height: 'auto', position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -55%)' }} />
+                <div className="loading-spinner"></div>
+                </div>
+            <div className="loading-text">
+                
                 {words.map((word, index) => (
                     <span
                         key={index}
-                        className={`fade-in ${visibleWords.includes(word) ? 'visible' : 'hidden'}`}
-                        style={{ opacity: 0, transition: 'opacity 0.7s' }}
+                        style={{ opacity: visibleIndex === words.length || visibleIndex === index ? 1 : 0.5 }}
+                        className={visibleIndex === words.length || visibleIndex === index ? "" : ""}
                     >
                         {word}
                     </span>

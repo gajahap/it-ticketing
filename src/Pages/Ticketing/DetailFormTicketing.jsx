@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Logo from '../../assets/images/gap.png';
 import axiosInstance from '../../axiosConfig';
 import { useParams } from 'react-router-dom';
+import Loading from '../../Components/Loading';
 
 const DetailFormTicketing = () => {
     const { ticketId } = useParams(); // Ambil nilai ticketId dari URL
@@ -71,12 +72,7 @@ const DetailFormTicketing = () => {
     return (
         <>
             {isLoading ? (
-                <div className="d-flex justify-content-center align-items-center vh-100 bg-light fades">
-                    <div style={{ position: 'relative' }}>
-                        <Image src={Logo} style={{ width: '4em', height: 'auto', position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
-                        <Spinner animation="border" role="status" style={{ color: '#04419c', width: '7em', height: '7em', borderWidth: '4px' }} />
-                    </div>
-                </div>
+                <Loading/>
             ) : (
                 <div style={{ position: 'relative',height: '100vh'}}>
                     {/* <ToastCustom /> */}

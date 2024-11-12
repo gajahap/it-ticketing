@@ -215,12 +215,7 @@ const FormTicketing = () => {
     return (
         <>
             {isLoading ? (
-                <div className="d-flex justify-content-center align-items-center vh-100 bg-light fades">
-                    <div style={{ position: 'relative' }}>
-                        <Image src={Logo} style={{ width: '4em', height: 'auto', position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
-                        <Spinner animation="border" role="status" style={{ color: '#04419c', width: '7em', height: '7em', borderWidth: '4px' }} />
-                    </div>
-                </div>
+                <Loading/>
             ) : (
                 <div style={{ position: 'relative', height: '100vh' }}>
                     <ToastCustom />

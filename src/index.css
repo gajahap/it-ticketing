@@ -186,10 +186,74 @@ input::-webkit-inner-spin-button {
 }
 
 
+/* Style for the main container */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+  flex-direction: column; /* Flex ke kolom untuk responsif */
+  gap: 1em; /* Spasi antara teks dan spinner */
+}
+
+/* Spinner styling */
+.loading-spinner {
+  width: 5em;
+  height: 5em;
+  border: 3px solid rgba(4, 65, 156, 0.3);
+  border-top-color: #04419c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5em;
+}
+
+/* Animation for spinner */
+@keyframes spin {
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+/* Text styling */
+.loading-text {
+  color: #04419c;
+  display: flex;
+  gap: 0.3em;
+  flex-wrap: wrap; /* Memastikan teks tetap dalam satu baris di layar kecil */
+  justify-content: center;
+}
+
+.loading-text span {
+  font-size: 1.8em;
+}
+
+.loading-text .bold {
+  font-weight: 500;
+}
+
+/* Fade-in animation */
 .fade-in {
   opacity: 0;
+  transition: opacity 0.7s ease-in;
 }
 
 .fade-in.visible {
   opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loading-text span {
+      font-size: 1.4em;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .loading-text span {
+      font-size: 1.2em;
+  }
+
+
 }

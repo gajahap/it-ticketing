@@ -6,6 +6,7 @@ import axiosInstance from '../../axiosConfig';
 import { useParams } from 'react-router-dom';
 import MessageModal from '../../Components/MessageModal';
 import ErrorHandler from '../../Components/ErrorHandler';
+import Loading from '../../Components/Loading';
 
 const DetailFormTicketing = () => {
     const { ticketId, token } = useParams(); // Ambil nilai ticketId dari URL
@@ -37,7 +38,6 @@ const DetailFormTicketing = () => {
                 setDepartmentOptions(formattedDepartmentOptions)
 
                 setSpkbItems(spkbItmesResponse.data);
-                console.log(ticketingResponse.data);
                 setIsLoading(false); // Move this to the finally block
             } catch (error) {
                 console.error(error);
@@ -68,6 +68,7 @@ const DetailFormTicketing = () => {
             setSpkbItems(spkbItmesResponse.data);
 
             setIsLoading(false); // Move this to the finally block
+            
         } catch (error) {
             console.error(error);
             setIsLoading(false); // Move this to the finally block
@@ -116,12 +117,7 @@ const DetailFormTicketing = () => {
     return (
         <>
             {isLoading ? (
-                <div className="d-flex justify-content-center align-items-center vh-100 bg-light fades">
-                    <div style={{ position: 'relative' }}>
-                        <Image src={Logo} style={{ width: '4em', height: 'auto', position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
-                        <Spinner animation="border" role="status" style={{ color: '#04419c', width: '7em', height: '7em', borderWidth: '4px' }} />
-                    </div>
-                </div>
+                <Loading/>
             ) : (
                 <>
                 {error ? (
@@ -183,11 +179,11 @@ const DetailFormTicketing = () => {
                             <p style={{marginBottom:'0', backgroundColor:'wheat', padding:'15px'}}>
                                 {data.is_accept ? (
                                     <> 
-                                        <strong>Pesan : </strong>Dear Bapak/Ibu [Users], tiket ini sudah disetujui pada {new Intl.DateTimeFormat('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date(data.approved_time))}
+                                        <strong>Pesan : </strong>Dear Bapak/Ibu [{data.user && data.user.name}], tiket {data.jenis_ticketings.is_spkb ? 'SPKB' : 'permintaan perbaikan'} ini sudah disetujui pada {new Intl.DateTimeFormat('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date(data.approved_time))}
                                     </>
                                 ):(
                                     <> 
-                                         <strong>Pesan : </strong>Dear Bapak/Ibu [Users], tiket ini menunggu persetujuan dari Bapak/Ibu untuk dapat diproses oleh teknisi, silakan tinjau kembali tiket ini sebelum melakukan approvement.
+                                         <strong>Pesan : </strong>Dear Bapak/Ibu [{data.user && data.user.name  }], tiket {data.jenis_ticketings.is_spkb ? 'SPKB' : 'permintaan perbaikan'} ini menunggu persetujuan dari Bapak/Ibu untuk dapat diproses oleh teknisi, silakan tinjau kembali tiket ini sebelum melakukan approvement.
                                     </>
                                 )}
                             </p>
