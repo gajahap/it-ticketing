@@ -61,7 +61,7 @@ const DetailFormTicketing = () => {
             
             const formattedDepartmentOptions = departmentsResponse.data.map(option => ({
                 id: option.id,
-                value: option.nama_depart
+                value: option.nama_divisi
             }));
             setDepartmentOptions(formattedDepartmentOptions)
 
@@ -215,7 +215,7 @@ const DetailFormTicketing = () => {
                                                     </tr>
                                                     <tr>
                                                         <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal',fontWeight:'bold' }}>Bag:</td>
-                                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.departments_id)?.value || 'loading...'}</td>
+                                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.divisis_id)?.value || 'loading...'}</td>
                                                     </tr>
                                                 </tbody>
                                             </Table>

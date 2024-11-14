@@ -36,7 +36,7 @@ const FormTicketing = () => {
         user_id: '',
         tgl_tiket: new Date().toISOString().split('T')[0],
         nama_pemohon: '',
-        departments_id: '',
+        divisis_id: '',
         contact_person: '',
         jenis_ticketings_id: '',
         description: '',
@@ -71,7 +71,7 @@ const FormTicketing = () => {
     
                 const formattedDepartmentOptions = departmentsResponse.data.map(option => ({
                     value: option.id,
-                    label: option.nama_depart
+                    label: option.nama_divisi
                 }));
                 setDepartmentOptions(formattedDepartmentOptions);
                 setIsLoading(false); // Move this to the finally block
@@ -260,14 +260,14 @@ const FormTicketing = () => {
                                             <Form.Control type="text" name="nama_pemohon" placeholder="Nama Lengkap Anda" value={formData.nama_pemohon} onChange={handleChangeForm} required />
                                         </Form.Group>
 
-                                        <Form.Group className="mb-3" controlId="departments_id">
-                                            <Form.Label><strong>Department <span className='text-danger'>*</span></strong></Form.Label>
+                                        <Form.Group className="mb-3" controlId="divisis_id">
+                                            <Form.Label><strong>Divisi <span className='text-danger'>*</span></strong></Form.Label>
                                             <Select
-                                                name="departments_id"
+                                                name="divisis_id"
                                                 options={departmentOptions}
                                                 styles={customStyles}
-                                                value={departmentOptions.find(option => option.value === formData.departments_id)}
-                                                onChange={(selectedOption) => setFormData({ ...formData, departments_id: selectedOption.value })}
+                                                value={departmentOptions.find(option => option.value === formData.divisis_id)}
+                                                onChange={(selectedOption) => setFormData({ ...formData, divisis_id: selectedOption.value })}
                                                 required
                                             />
                                         </Form.Group>
