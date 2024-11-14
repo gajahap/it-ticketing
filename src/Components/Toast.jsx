@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Toast } from 'react-bootstrap';
+import { Toast,Button } from 'react-bootstrap';
 import personVector from '../assets/images/logo_gajah.jpg'; // Ensure you have this path correctly set to your vector image file
+import { useNavigate } from 'react-router-dom';
+import { FaBook } from "react-icons/fa";
 
 const ToastCustom = () => {
   const [show, setShow] = useState(true);
 
   const toggleShow = () => setShow(!show);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -22,7 +26,12 @@ const ToastCustom = () => {
                     onClick={toggleShow}
                 ></button>
             </Toast.Header>
-            <Toast.Body><p>Hai, salam hangat. silahkan mengisi <b>"Form"</b> untuk mengajukan tiket, dan pastikan anda mengisi form dengan benar.</p><p>Anda Juga dapat memeriksa progress dari tiket anda pada bagian <b>"Tracking"</b>.</p> </Toast.Body>
+            <Toast.Body>
+              <p>Hai, salam hangat. silahkan mengisi <b>"Form"</b> untuk mengajukan tiket, dan pastikan anda mengisi form dengan benar.</p>
+              <p>Anda Juga dapat memeriksa progress dari tiket anda pada bagian <b>"Tracking"</b>.</p>
+              <p>Baca buku panduan pada link di bawah ini:</p>
+              <Button onClick={() => navigate('/documentation')}><FaBook /><span className='ms-1'>Dokumentasi</span></Button>
+            </Toast.Body>
         </Toast>
     </>
 

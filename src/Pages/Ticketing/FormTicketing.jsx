@@ -10,6 +10,7 @@ import Select from 'react-select';
 import Elephant from '../../assets/images/elephant.png';
 import CircularProgressBar from '../../Components/CircularProgressBar/CircularProgressBar';
 import Loading from '../../Components/Loading';
+import { FaBook } from "react-icons/fa";
 
 const FormTicketing = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -137,6 +138,8 @@ const FormTicketing = () => {
         } catch (error) {
             setMessage('Terjadi kesalahan saat mengirim data.');
             setError(error);
+            console.log(error); 
+            
         }
     };
 
@@ -316,6 +319,7 @@ const FormTicketing = () => {
                                                 styles={customStyles}
                                                 value={approvedToOptions.find(option => option.value === formData.user_id)}
                                                 onChange={(selectedOption) => setFormData({ ...formData, user_id: selectedOption.value })}
+                                                required
                                             />
                                         </Form.Group>
 
@@ -355,7 +359,7 @@ const FormTicketing = () => {
 
                         </Card>
                     </Container>
-
+                    
                     <MessageModal show={showModal} handleClose={handleCloseMessage} message={message} error={error}/>
 
                     <footer style={{ bottom: 0, width: '100%', padding: '20px 0', textAlign: 'center', background: '#f8f9fa' }}>

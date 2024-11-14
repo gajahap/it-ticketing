@@ -1,40 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Button, Form, Card, Image, Row, Col, Spinner ,Table, Overlay, Tooltip } from 'react-bootstrap';
+import { Container, Button, Card, Image, Row, Col, Spinner ,Table, Overlay, Tooltip, Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Logo from '../../assets/images/gap.png';
 import axiosInstance from '../../axiosConfig';
 import { useParams } from 'react-router-dom';
+import MessageModal from '../../Components/MessageModal';
+import ErrorHandler from '../../Components/ErrorHandler';
 import Loading from '../../Components/Loading';
 
 const DetailFormTicketing = () => {
-    const { ticketId } = useParams(); // Ambil nilai ticketId dari URL
+    const { ticketId, token } = useParams(); // Ambil nilai ticketId dari URL
     const [isLoading, setIsLoading] = useState(true);
-    const [data , setData] = useState([]);
+    const [isButtonLoading, setIsButtonLoading] = useState(false);
+    const [data , setData] = useState(null);
     const [tooltip,setTooltip] = useState(false);
     const target = useRef(null);
-    const navigate = useNavigate(); // Initialize useNavigate
     const [departmentOptions, setDepartmentOptions] = useState([]);
-
-
-    // useEffect(() => {
-    //     const getData = async () => {
-    //         try {
-    //             const response = await axiosInstance.get(`/ticketings/get/${ticketId}`);                
-    //             setData(response.data);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-    //     getData();
-    //     setIsLoading(false);
-    // }, []);
+    const [spkbItems, setSpkbItems] = useState(null);
+    const [message, setMessage] = useState(null);
+    const [showModal, setShowModal] = useState(false); // Control for modal visibility
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [ticketingResponse, departmentsResponse] = await Promise.all([
+                const [ticketingResponse, departmentsResponse, spkbItmesResponse] = await Promise.all([
                     axiosInstance.get(`/ticketings/get/${ticketId}`),
-                    axiosInstance.get('/departments')
+                    axiosInstance.get('/departments'),
+                    axiosInstance.get(`/spkb-items/list/${ticketId}`)
+    
                 ]);
                 setData(ticketingResponse.data);
                 
@@ -43,10 +37,15 @@ const DetailFormTicketing = () => {
                     value: option.nama_depart
                 }));
                 setDepartmentOptions(formattedDepartmentOptions)
+    
+                setSpkbItems(spkbItmesResponse.data);
+    
                 setIsLoading(false); // Move this to the finally block
+                
             } catch (error) {
                 console.error(error);
                 setIsLoading(false); // Move this to the finally block
+                console.error(error);
             }
         };
     
@@ -55,7 +54,7 @@ const DetailFormTicketing = () => {
 
     function maskPhoneNumber(phoneNumber) {
         // Pastikan panjang nomor telepon cukup untuk disensor
-        if (!phoneNumber || phoneNumber.length <= 10) return phoneNumber;
+        if (!phoneNumber || phoneNumber.length <= 5) return phoneNumber;
       
         // Ambil 3 angka pertama dan 2 angka terakhir
         const firstThree = phoneNumber.slice(0, 4);
@@ -67,6 +66,13 @@ const DetailFormTicketing = () => {
         // Gabungkan dengan tanda bintang untuk angka yang disensor
         return `${firstThree}${stars}${lastTwo}`;
       }
+
+
+ 
+      const handleCloseMessage = () => {
+        setShowModal(false);
+        setMessage(null); // Clear the message when modal closes
+    };
       
 
     return (
@@ -74,16 +80,19 @@ const DetailFormTicketing = () => {
             {isLoading ? (
                 <Loading/>
             ) : (
-                <div style={{ position: 'relative',height: '100vh'}}>
+                <>
+                {error ? (
+                    <ErrorHandler error={error}/>
+                ):(
+                    <div style={{ position: 'relative',height: '100vh'}}>
                     {/* <ToastCustom /> */}
                     <div style={{ overflow: 'hidden', position: 'absolute', width: '100%', height: '100%'}}>
                         <div className="half-circle"></div>
                     </div>
-                    <Container className="d-flex flex-column justify-content-center align-items-center py-5" style={{ height: '100%' }}>
+                    <Container className="d-flex flex-column justify-content-center align-items-center py-5" style={{ minHeight: '100%' }}>
                         <Card 
                             className="p-lg-5 p-4" 
-                            style={{ maxWidth: '80em', width: '100%', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1)', borderRadius: '15px', border: 'none', marginTop: '20px' }}
-                        >   
+                            style={{ maxWidth: '1200px', width: '100%', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1)', borderRadius: '15px', border: 'none', marginTop: '20px' }}>   
                             <Row>
                                 <Col lg={4} md={12} sm={12}>
                                     <Image
@@ -128,12 +137,85 @@ const DetailFormTicketing = () => {
                                 </Col>
                             </Row>
                             <hr />
-                            <p>
+                            <p style={{marginBottom:'0', backgroundColor:'wheat', padding:'15px'}}>
                                 <strong>Note: </strong>Request Ticketing Anda berhasil disubmit, cek progress permintaan anda pada halaman <a href="/" target="_blank">Form Ticketing</a> pada bagian <b>Track Progres</b>.
                             </p>
                             <hr />         
 
-                            <Table>
+
+                            {data.jenis_ticketings.is_spkb ? (
+                                <>
+                                <Card className='p-2'>
+                                    <Row className='flex-md-row-reverse'>
+                                        <Col lg={4} md={12} sm={12}>
+                                            <p style={{ textAlign: 'right', fontSize: '20px',paddingTop:'10%'}} className="text-center">PT. GAJAH ANGKASA PERKASA BANDUNG</p>
+                                        </Col>
+                                        <Col lg={4} md={12} sm={12}>
+                                            <h1 className='text-center'>S.P.K.B</h1>
+                                            <hr />
+                                            <p className='text-center'>(SURAT PERMINTAAN KEBUTUHAN BARANG)</p>
+                                        </Col>
+                                        <Col lg={4} md={12} sm={12}>
+                                            <Table >
+                                                <tbody>
+                                                    <tr>
+                                                        <td style={{fontWeight:'bold'}}>Tgl:</td>
+                                                        <td>{data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'loading...'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{fontWeight:'bold'}}>No. SPKB:</td>
+                                                        <td>{data.no_tiket || 'loading...'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal',fontWeight:'bold' }}>Bag:</td>
+                                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.departments_id)?.value || 'loading...'}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        </Col>
+                                    </Row>
+                                    <hr />
+                                    <div style={{ overflow: 'auto', maxHeight: '300px' }}>
+                                        <Table bordered>
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Banyak Barang</th>
+                                                    <th>Satuan</th>
+                                                    <th>Nama Barang</th>
+                                                    <th>Keterangan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {spkbItems && spkbItems.map((spkbItem, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{spkbItem.qty_spkb_item}</td>
+                                                        <td>{spkbItem.satuan_spkb_item}</td>
+                                                        <td>{spkbItem.spkb_barang?.nama_barang}</td>
+                                                        <td>{spkbItem.ket_spkb_item}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                    <Row>
+                                        <Col>
+
+                                        </Col>
+                                        <Col>
+                                            <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Mengetahui Ka. Bag</p>
+                                            <p></p>
+                                        </Col>
+                                        <Col>
+                                            <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Pemohon,</p>
+                                            <p style={{ textAlign: 'center',paddingTop:'20%'}}>{data.nama_pemohon}</p>
+                                        </Col>
+                                    </Row>  
+                                </Card>
+                                </>
+                            ) : (
+                                <Table>
                                 <tbody>
                                     {/* <tr>
                                         <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Date</td>
@@ -169,19 +251,42 @@ const DetailFormTicketing = () => {
                                             </td>
                                         </tr>
                                     )}
-
                                 </tbody>
                             </Table>
+                            )}
+
+                            {data.file_upload_url === null ? (
+                                <>
+                                <Stack gap={3}>
+                                    <strong>Lampiran</strong>
+                                    <Card className="p-2"style={{ width: '300px', height: '200px'}}>
+                                        <a href={`http://192.168.2.40:8000${data.file_upload_url}`} className="text-decoration-none text-dark"> 
+                                            <Card.Img variant="top" src={`http://192.168.2.40:8000${data.file_upload_url}`}  style={{ maxWidth: '100%', height: '30%', objectFit: 'cover' }}
+                                            />
+                                            <Card.Body>
+                                                {data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'loading..'}
+                                            </Card.Body>
+                                        </a>
+                                    </Card>
+                                </Stack>
+                                </>
+                            ):null}
+
 
 
 
 
                         </Card>
                     </Container>
+                    <MessageModal show={showModal} handleClose={handleCloseMessage} message={message}/>
                     <footer style={{ bottom: 0, width: '100%', padding: '20px 0', textAlign: 'center', background: '#f8f9fa' }}>
-                            <p style={{ margin: 0, fontSize: '14px', color: '#6c757d' }}>© {new Date().getFullYear()} PT.Gajah Angkasa Perkasa. All Rights Reserved.</p>
+                            <p style={{ margin: 0, fontSize: '14px', color: '#6c757d'}}>© {new Date().getFullYear()} PT.Gajah Angkasa Perkasa. All Rights Reserved.</p>
                     </footer>
                 </div>
+                )}
+
+                </>
+
             )}
         </>
     );

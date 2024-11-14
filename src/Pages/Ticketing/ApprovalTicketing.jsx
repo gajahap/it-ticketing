@@ -246,9 +246,20 @@ const DetailFormTicketing = () => {
                                             </tbody>
                                         </Table>
                                     </div>
+                                    <Row>
+                                        <Col>
+
+                                        </Col>
+                                        <Col>
+                                            <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Mengetahui Ka. Bag</p>
+                                            <p></p>
+                                        </Col>
+                                        <Col>
+                                            <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Pemohon,</p>
+                                            <p style={{ textAlign: 'center',paddingTop:'20%'}}>{data.nama_pemohon}</p>
+                                        </Col>
+                                    </Row>  
                                 </Card>
-
-
                                 </>
                             ) : (
                                 <Table>

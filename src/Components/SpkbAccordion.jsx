@@ -121,6 +121,7 @@ const SpkbAccordion = ({ onDataChange }) => {
                       styles={customStyles}
                       value={options.find(option => option.value === item.spkb_barangs_id)}
                       onChange={(selectedOption) => handleSelectChange(selectedOption, index)}
+                      placeholder="Pilih Barang"
                     />
                   </div>
                   <ContextAwareToggle eventKey={index}>Detail</ContextAwareToggle>

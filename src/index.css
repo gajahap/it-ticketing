@@ -257,3 +257,33 @@ input::-webkit-inner-spin-button {
 
 
 }
+
+
+.image-doc{
+  width: 40%;
+  height: auto;
+  padding: 10px;
+}
+
+.documentation-card{
+  width: 100%;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  border: none;
+  margin-top: 20px;
+  min-height: 800px;
+  padding: 50px;
+}
+
+@media (max-width: 768px) {
+  .documentation-card{
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-doc{
+    width: 100%;
+    height: auto;
+  }
+}
