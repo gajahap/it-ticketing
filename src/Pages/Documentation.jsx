@@ -42,7 +42,7 @@ const Documentation = () => {
                                     </p>
                                     <h5>1. Bagaimana Cara Saya Menggunakan Program ini?</h5>
                                     <p style={{ padding: '10px' }}>
-                                        Ada dua jenis tiket diantaranya adalah tiket Perbaikan dan tiket Pengajuan Barang (SPKB):
+                                        Ada Tiga jenis tiket diantaranya adalah tiket Perbaikan, tiket Pengajuan Barang (SPKB), Tiket Peminjaman Barang:
                                         <h5 className='mt-2'>A. Perbaikan</h5>
                                         <ul>
                                             <li>Kunjungi halaman utama situs web aplikasi IT Ticketing di alamat <a href="https://ticketing.portalgapsoft.xyz">https://ticketing.portalgapsoft.xyz</a></li>
@@ -66,7 +66,7 @@ const Documentation = () => {
                                         <p style={{backgroundColor: 'wheat', padding: '10px'}}>Untuk Pengajuan barang langkahnya hampir sama dengan langkah permintaan perbaikan diatas, namun yang membedakan adalah, anda harus memastikan untuk memilih jenis permintaan <b>"Permintaan Barang"</b>.</p>
                                         <ul>
                                            
-                                            <li>Pastikan anda memilih jenis permintaan <b>"Perbaikan"</b> pada form.</li>
+                                            <li>Pastikan anda memilih jenis permintaan <b>"Permintaan Barang"</b> pada form.</li>
                                             <Image src={documentationImages[6]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
                                             <li>Jika anda sudah memilih jenis permintaan, maka akan muncul input untuk SPKB, silhkan pilih barang, lalu isi field yang ada di dalam detailnya. anda juga dapat mengajukan lebih dari 1  barang dengan menekan tombol bertanda<b>"+"</b>.</li>
                                             <Image src={documentationImages[7]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
@@ -78,6 +78,17 @@ const Documentation = () => {
                                             <Image src={documentationImages[9]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
                                             <Image src={documentationImages[10]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
                                             <li>Tiket anda akan diproses teknisi apabila tiket telah diapprove.</li>
+                                        </ul>
+
+                                        <h5 className='mt-2'>B. Peminjaman Barang</h5>
+                                        <p style={{backgroundColor: 'wheat', padding: '10px'}}>Untuk Peminjaman barang langkahnya hampir sama dengan langkah Pengajuan Barang diatas, namun yang membedakan adalah, anda harus memastikan untuk memilih jenis permintaan <b>"Peminjaman"</b>.</p>
+                                        <ul>
+                                           
+                                            <li>Pastikan anda memilih jenis permintaan <b>"Peminjaman"</b> pada form.</li>
+                                            <li>Jika anda sudah memilih jenis permintaan, maka akan muncul input untuk Surat Peminjaman Barang, silhkan pilih barang, lalu isi field yang ada di dalam detailnya. anda juga dapat mengajukan lebih dari 1  barang dengan menekan tombol bertanda<b>"+"</b>.</li>
+                                            <li>Setelah itu anda dapat menyertakan gambar pada field <b>"Upload Foto"</b>, field ini bersifat optional, bisa diisi bisa juga tidak.</li>
+                                            <li>Pada field <b>"Approved To"</b> anda harus memilih kepada siapa anda akan meminta persetujuan, dalam hal ini adalah kepala bagian.</li>
+                                            <li>Setelah anda memastikan semua field telah terisi dengan benar, maka Klik tombol <b>"Submit"</b>, jika berhasil anda akan diarahkan ke halaman <b>"Detail Ticketing"</b></li>
                                         </ul>
                                     </p>
                                 </Card>
