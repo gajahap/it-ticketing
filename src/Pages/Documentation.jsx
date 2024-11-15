@@ -80,7 +80,7 @@ const Documentation = () => {
                                             <li>Tiket anda akan diproses teknisi apabila tiket telah diapprove.</li>
                                         </ul>
 
-                                        <h5 className='mt-2'>B. Peminjaman Barang</h5>
+                                        <h5 className='mt-2'>C. Peminjaman Barang</h5>
                                         <p style={{backgroundColor: 'wheat', padding: '10px'}}>Untuk Peminjaman barang langkahnya hampir sama dengan langkah Pengajuan Barang diatas, namun yang membedakan adalah, anda harus memastikan untuk memilih jenis permintaan <b>"Peminjaman"</b>.</p>
                                         <ul>
                                            
