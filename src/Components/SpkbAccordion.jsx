@@ -25,9 +25,9 @@ const ContextAwareToggle = ({ children, eventKey, callback }) => {
   );
 };
 
-const SpkbAccordion = ({ onDataChange }) => {
+const SpkbAccordion = ({ onDataChange, isDateRange }) => {
   const [spkb, setSpkb] = useState([
-    { spkb_barangs_id: '', qty_spkb_item: '', satuan_spkb_item: '', ket_spkb_item: '' },
+    { spkb_barangs_id: '', qty_spkb_item: '', satuan_spkb_item: '', ket_spkb_item: '', start_date: '', end_date: '' },
   ]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const SpkbAccordion = ({ onDataChange }) => {
 }, [spkb,onDataChange]);
 
   const handleAddSpkb = () => {
-    setSpkb([...spkb, { spkb_barangs_id: '', qty_spkb_item: '', satuan_spkb_item: '', ket_spkb_item: '' }]);
+    setSpkb([...spkb, { spkb_barangs_id: '', qty_spkb_item: '', satuan_spkb_item: '', ket_spkb_item: '',start_date: '', end_date: '' }]);
   };
 
   const handleRemoveSpkb = (index) => {
@@ -107,7 +107,11 @@ const SpkbAccordion = ({ onDataChange }) => {
   return (
     <>
       <hr />
-      <h4 className='py-2'>SPKB</h4>
+      {isDateRange ? (
+        <h4 className='py-2'>Surat Peminjaman Barang</h4>
+      ):(
+        <h4 className='py-2'>SPKB</h4>
+      )}
       <Accordion>
         <Stack direction="vertical" gap={2}>
           {spkb.map((item, index) => (
@@ -131,35 +135,68 @@ const SpkbAccordion = ({ onDataChange }) => {
                 </Stack>
               </Card.Header>
               <Accordion.Collapse eventKey={index}>
-                <Stack direction="horizontal" gap={3} className='p-2'>
-                  <Form.Control
-                    type="number"
-                    className='text-center'
-                    name="qty_spkb_item"
-                    value={item.qty_spkb_item}
-                    placeholder='Qty'
-                    required
-                    style={{ width: '20%' }}
-                    onChange={(event) => handleSpkbChange(event, index)}
-                  />
-                  <Form.Control
-                    type="text"
-                    className='text-center'
-                    name="satuan_spkb_item"
-                    value={item.satuan_spkb_item}
-                    placeholder='Unit'
-                    required
-                    style={{ width: '20%' }}
-                    onChange={(event) => handleSpkbChange(event, index)}
-                  />
-                  <Form.Control
-                    type="text"
-                    name="ket_spkb_item"
-                    value={item.ket_spkb_item}
-                    placeholder='Keterangan'
-                    style={{ width: '60%' }}
-                    onChange={(event) => handleSpkbChange(event, index)}
-                  />
+                <Stack direction="vertical">
+                  <Stack direction="horizontal" gap={3} className='p-2'>
+                    <Form.Control
+                      type="number"
+                      className='text-center'
+                      name="qty_spkb_item"
+                      value={item.qty_spkb_item}
+                      placeholder='Qty'
+                      required
+                      style={{ width: '20%' }}
+                      onChange={(event) => handleSpkbChange(event, index)}
+                    />
+                    <Form.Control
+                      type="text"
+                      className='text-center'
+                      name="satuan_spkb_item"
+                      value={item.satuan_spkb_item}
+                      placeholder='Unit'
+                      required
+                      style={{ width: '20%' }}
+                      onChange={(event) => handleSpkbChange(event, index)}
+                    />
+                    <Form.Control
+                      type="text"
+                      name="ket_spkb_item"
+                      value={item.ket_spkb_item}
+                      placeholder='Keterangan'
+                      style={{ width: '60%' }}
+                      onChange={(event) => handleSpkbChange(event, index)}
+                      required
+                    />
+                  </Stack>
+                  {isDateRange? (
+                    <>
+                    <strong className='text-center'>Rengtang Waktu</strong>
+                    <Stack direction="horizontal" gap={3} className='p-2'>
+                      <Form.Control
+                        type="date"
+                        className='text-center'
+                        name="start_date"
+                        value={item.start_date}
+                        placeholder='Dari Tanggal'
+                        required
+                        style={{ width: '50%' }}
+                        onChange={(event) => handleSpkbChange(event, index)}
+                      />
+                      sampai
+                      <Form.Control
+                        type="date"
+                        className='text-center'
+                        name="end_date"
+                        value={item.end_date}
+                        placeholder='Sampai Tanggal'
+                        required
+                        style={{ width: '50%' }}
+                        onChange={(event) => handleSpkbChange(event, index)}
+                      />
+                    </Stack>
+                    </>
+                  ): null}
+
+
                 </Stack>
               </Accordion.Collapse>
             </Card>

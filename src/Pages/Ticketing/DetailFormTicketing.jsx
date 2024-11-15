@@ -151,9 +151,20 @@ const DetailFormTicketing = () => {
                                             <p style={{ textAlign: 'right', fontSize: '20px',paddingTop:'10%'}} className="text-center">PT. GAJAH ANGKASA PERKASA BANDUNG</p>
                                         </Col>
                                         <Col lg={4} md={12} sm={12}>
-                                            <h1 className='text-center'>S.P.K.B</h1>
-                                            <hr />
-                                            <p className='text-center'>(SURAT PERMINTAAN KEBUTUHAN BARANG)</p>
+                                            {data.jenis_ticketings.is_daterange ? (
+                                                <>
+                                                    <h1 className='text-center'>S.P.B</h1>
+                                                    <hr />
+                                                    <p className='text-center'>(SURAT PEMINJAMAN BARANG)</p>
+                                                </>
+                                            ):(
+                                                <>
+                                                    <h1 className='text-center'>S.P.K.B</h1>
+                                                    <hr />
+                                                    <p className='text-center'>(SURAT PERMINTAAN KEBUTUHAN BARANG)</p>
+                                                </>
+                                            )} 
+
                                         </Col>
                                         <Col lg={4} md={12} sm={12}>
                                             <Table >
@@ -163,12 +174,12 @@ const DetailFormTicketing = () => {
                                                         <td>{data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'loading...'}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{fontWeight:'bold'}}>No. SPKB:</td>
+                                                        <td style={{fontWeight:'bold'}}>{data.jenis_ticketings.is_daterange ? 'No. SPB' : 'No. SPKB'}:</td>
                                                         <td>{data.no_tiket || 'loading...'}</td>
                                                     </tr>
                                                     <tr>
                                                         <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal',fontWeight:'bold' }}>Bag:</td>
-                                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.departments_id)?.value || 'loading...'}</td>
+                                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.divisis_id)?.value || 'loading...'}</td>
                                                     </tr>
                                                 </tbody>
                                             </Table>
@@ -183,6 +194,9 @@ const DetailFormTicketing = () => {
                                                     <th>Banyak Barang</th>
                                                     <th>Satuan</th>
                                                     <th>Nama Barang</th>
+                                                    {data.jenis_ticketings.is_daterange ? (
+                                                        <th>Rentang Waktu</th>
+                                                    ):null}
                                                     <th>Keterangan</th>
                                                 </tr>
                                             </thead>
@@ -193,6 +207,9 @@ const DetailFormTicketing = () => {
                                                         <td>{spkbItem.qty_spkb_item}</td>
                                                         <td>{spkbItem.satuan_spkb_item}</td>
                                                         <td>{spkbItem.spkb_barang?.nama_barang}</td>
+                                                        {data.jenis_ticketings.is_daterange ? (
+                                                            <td>{spkbItem.start_date ? `${new Date(spkbItem.start_date).toLocaleString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })} - ${spkbItem.end_date ? new Date(spkbItem.end_date).toLocaleString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}` : ''}</td>
+                                                        ):null}
                                                         <td>{spkbItem.ket_spkb_item}</td>
                                                     </tr>
                                                 ))}
@@ -205,6 +222,7 @@ const DetailFormTicketing = () => {
                                         </Col>
                                         <Col>
                                             <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Mengetahui Ka. Bag</p>
+                                            <p style={{ textAlign: 'center',paddingTop:'20%'}}>{data.user && data.user.name}</p>
                                             <p></p>
                                         </Col>
                                         <Col>

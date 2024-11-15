@@ -23,6 +23,7 @@ const FormTicketing = () => {
     const [departmentOptions, setDepartmentOptions] = useState([]);
     const [isTrackingLoading, setIsTrackingLoading] = useState(false);
     const [isSpkbForm, setIsSpkbForm] = useState(null);
+    const [isDateRange, setIsDateRange] = useState(null);
     const [progress, setProgress] = useState(0);
     const descriptions = [
         "Pending",
@@ -62,6 +63,9 @@ const FormTicketing = () => {
                 ]);
     
                 setJenisPermintaan(jenisPermintaanResponse.data);
+
+                console.log(jenisPermintaanResponse.data);
+                
     
                 const formattedApprovedToOptions = approvedToResponse.data.map(option => ({
                     value: option.id,
@@ -135,10 +139,13 @@ const FormTicketing = () => {
             const response = await axiosInstance.post('/ticketings/store', formData);
             const id = response.data.ticketing.id;
             navigate(`/detail-form/${id}`);
+            
         } catch (error) {
             setMessage('Terjadi kesalahan saat mengirim data.');
             setError(error);
             console.log(error); 
+            console.log(formData);
+
             
         }
     };
@@ -289,6 +296,7 @@ const FormTicketing = () => {
                                                     value={jenis.id}
                                                     onChange={(e) => {
                                                         setIsSpkbForm(jenis.is_spkb);
+                                                        setIsDateRange(jenis.is_daterange);
                                                         handleChangeForm(e);
                                                     }}
                                                     required 
@@ -297,7 +305,7 @@ const FormTicketing = () => {
                                         </Form.Group>
                                         
                                         {isSpkbForm === null ? null : isSpkbForm ? (
-                                            <SpkbAccordion onDataChange={handleSpkbDataChange} />
+                                            <SpkbAccordion onDataChange={handleSpkbDataChange} isDateRange={isDateRange}/>
                                         ) : (
                                             <Form.Group className="mb-3" controlId="description">
                                             <Form.Label><strong>Note<span className='text-danger'>*</span></strong></Form.Label>
@@ -332,7 +340,7 @@ const FormTicketing = () => {
                                     <Form onSubmit={handleSubmitTracking} className='fades'>
                                         <Form.Group className="mb-3" controlId="no_tiket">
                                             <Form.Label><strong>Nomor Tiket<span className='text-danger'>*</span></strong></Form.Label>
-                                            <Form.Control type="text" name="no_tiket" placeholder="Masukkan id tiket Anda" value={trackingData.no_tiket} onChange={handleChangeTracking} required />
+                                            <Form.Control type="text" name="no_tiket" placeholder="Masukkan No tiket Anda" value={trackingData.no_tiket} onChange={handleChangeTracking} required />
                                         </Form.Group>
                                         <Button variant="primary" type="submit" className="w-100">
                                             {isTrackingLoading ? (
