@@ -65,7 +65,8 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
     const fetchDataBarang = async () => {
       try {
         const response = await axiosInstance.get('/spkb-barang');
-        setOptionBarang(response.data);
+        const filteredData = response.data.filter(item => item.is_peminjaman === true);
+        setOptionBarang(filteredData);
       } catch (error) {
         console.error(error);
       }
