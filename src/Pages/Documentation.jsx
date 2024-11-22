@@ -52,8 +52,7 @@ const Documentation = () => {
                                             <Image src={documentationImages[1]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
                                             <li>Jika anda sudah memilih jenis permintaan, maka akan muncul field note, isi field tersebut sesuai dengan permasalahan anda, jelaskan secara detail dan tidak bersifat ambigu.</li>
                                             <Image src={documentationImages[2]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
-                                            <li>Setelah itu anda dapat menyertakan gambar pada field <b>"Upload Foto"</b>, field ini bersifat optional, bisa diisi bisa juga tidak.</li>
-                                            <li>Pada field <b>"Approved To"</b> anda harus memilih kepada siapa anda akan meminta persetujuan, dalam hal ini adalah kepala bagian.</li>
+                                            <li>Anda dapat menyertakan gambar pada field <b>"Upload Foto"</b>, field ini bersifat optional, bisa diisi bisa juga tidak.</li>
                                             <li>Setelah anda memastikan semua field telah terisi dengan benar, maka Klik tombol <b>"Submit"</b>, jika berhasil anda akan diarahkan ke halaman <b>"Detail Ticketing"</b></li>
                                             <Image src={documentationImages[3]} alt="Documentation GIF" className="image-doc d-inline-block align-top" />
                                             <li>Salin No Tiket anda, lalu anda dapat mengecek progress tiket anda pada bagian <b>"Tracking"</b> pada halaman utama.</li>

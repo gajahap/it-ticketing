@@ -7,6 +7,10 @@ import { useParams } from 'react-router-dom';
 import MessageModal from '../../Components/MessageModal';
 import ErrorHandler from '../../Components/ErrorHandler';
 import Loading from '../../Components/Loading';
+import { FaPrint } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa";
+import html2pdf from 'html2pdf.js';
+
 
 const DetailFormTicketing = () => {
     const { ticketId, token } = useParams(); // Ambil nilai ticketId dari URL
@@ -73,8 +77,34 @@ const DetailFormTicketing = () => {
         setShowModal(false);
         setMessage(null); // Clear the message when modal closes
     };
-      
 
+    const navigate = useNavigate();
+      
+    const handleDownload = () => {
+        const generatePDF = async () => {
+            const element = document.getElementById('pdfContent');
+
+            const options = {
+                margin: [10, 10, 10, 10],
+                filename: `Surat-${ticketId}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: {
+                    scale: 4,
+                    logging: true,
+                    useCORS: true,
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+            };
+
+            try {
+                await html2pdf().from(element).set(options).save();
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        generatePDF();
+    }
     return (
         <>
             {isLoading ? (
@@ -92,7 +122,7 @@ const DetailFormTicketing = () => {
                     <Container className="d-flex flex-column justify-content-center align-items-center py-5" style={{ minHeight: '100%' }}>
                         <Card 
                             className="p-lg-5 p-4" 
-                            style={{ maxWidth: '1200px', width: '100%', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1)', borderRadius: '15px', border: 'none', marginTop: '20px' }}>   
+                            style={{ maxWidth: '1200px', width: '100%', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1)', borderRadius: '15px', border: 'none', marginTop: '20px' }}> 
                             <Row>
                                 <Col lg={4} md={12} sm={12}>
                                     <Image
@@ -145,7 +175,7 @@ const DetailFormTicketing = () => {
 
                             {data.jenis_ticketings.is_spkb ? (
                                 <>
-                                <Card className='p-2'>
+                                <Card className='p-2' id={'pdfContent'}>
                                     <Row className='flex-md-row-reverse'>
                                         <Col lg={4} md={12} sm={12}>
                                             <p style={{ textAlign: 'right', fontSize: '20px',paddingTop:'10%'}} className="text-center">PT. GAJAH ANGKASA PERKASA BANDUNG</p>
@@ -229,8 +259,12 @@ const DetailFormTicketing = () => {
                                             <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Pemohon,</p>
                                             <p style={{ textAlign: 'center',paddingTop:'20%'}}>{data.nama_pemohon}</p>
                                         </Col>
-                                    </Row>  
+                                    </Row>
                                 </Card>
+                                <Stack direction='horizontal' className='my-2' gap={1}>
+                                    <Button onClick={() => navigate('/print-surat/' + data.id)}><FaPrint /></Button>
+                                    <Button onClick={handleDownload}><FaDownload /></Button>
+                                </Stack>
                                 </>
                             ) : (
                                 <Table>

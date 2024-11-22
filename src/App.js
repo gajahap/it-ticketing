@@ -3,6 +3,7 @@ import FormTicketing from './Pages/Ticketing/FormTicketing';
 import DetailFormTicketing from './Pages/Ticketing/DetailFormTicketing';
 import ApprovalTicketing from './Pages/Ticketing/ApprovalTicketing';
 import Documentation from './Pages/Documentation';
+import PrintSurat from './Pages/Ticketing/Print/PrintSurat';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/detail-form/:ticketId" element={<DetailFormTicketing />} />
         <Route path="/approval/:ticketId/:token" element={<ApprovalTicketing />} />
         <Route path="/documentation" element={<Documentation />} />
+        <Route path="/print-surat/:ticketId" element={<PrintSurat/>} />
       </Routes>
     </Router>
   );

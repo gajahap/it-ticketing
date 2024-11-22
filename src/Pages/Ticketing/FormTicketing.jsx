@@ -319,17 +319,19 @@ const FormTicketing = () => {
                                             <Form.Control type="file" name="file_upload" placeholder="Pilih File" onChange={handleChangeForm} />
                                         </Form.Group>   
 
-                                        <Form.Group className="mb-3" controlId="user_id">
-                                            <Form.Label><strong>Approved to <span className='text-danger'>*</span></strong></Form.Label>
-                                            <Select
-                                                name="user_id"
-                                                options={approvedToOptions}
-                                                styles={customStyles}
-                                                value={approvedToOptions.find(option => option.value === formData.user_id)}
-                                                onChange={(selectedOption) => setFormData({ ...formData, user_id: selectedOption.value })}
-                                                required
-                                            />
-                                        </Form.Group>
+                                        {true  ? (
+                                            <Form.Group className="mb-3" controlId="user_id">
+                                                <Form.Label><strong>Approved to <span className='text-danger'>*</span></strong></Form.Label>
+                                                <Select
+                                                    name="user_id"
+                                                    options={approvedToOptions}
+                                                    styles={customStyles}
+                                                    value={approvedToOptions.find(option => option.value === formData.user_id)}
+                                                    onChange={(selectedOption) => setFormData({ ...formData, user_id: selectedOption.value })}
+                                                    required
+                                                />
+                                            </Form.Group>
+                                        ):null}
 
                                         <Button variant="primary" type="submit" className="w-100">
                                             Submit
