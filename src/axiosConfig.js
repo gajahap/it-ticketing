@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'https://support.portalgapsoft.xyz/api', // replace with your API base URL
-  timeout: 50000, // request timeout in milliseconds (optional)
+  timeout: 50000, // request timeout in millisecon  ds (optional)
   headers: {
     'Content-Type': 'multipart/form-data',
   },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useCallback  } from 'react';
-import { Container, Button, Form, Card, Image, Row, Col, Spinner, Tab, Tabs, Table } from 'react-bootstrap';
+import { Container, Button, Form, Card, Image, Row, Col, Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../../assets/images/gap.png';
 import ToastCustom from '../../Components/Toast';
@@ -10,7 +10,6 @@ import Select from 'react-select';
 import Elephant from '../../assets/images/elephant.png';
 import CircularProgressBar from '../../Components/CircularProgressBar/CircularProgressBar';
 import Loading from '../../Components/Loading';
-import { FaBook } from "react-icons/fa";
 
 const FormTicketing = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +23,6 @@ const FormTicketing = () => {
     const [isTrackingLoading, setIsTrackingLoading] = useState(false);
     const [isSpkbForm, setIsSpkbForm] = useState(null);
     const [isDateRange, setIsDateRange] = useState(null);
-    const [progress, setProgress] = useState(0);
     const descriptions = [
         "Pending",
         // "Tiket telah disetujui oleh kepala bagian",
@@ -135,6 +133,9 @@ const FormTicketing = () => {
 
     const handleSubmitForm = async (e) => {
         e.preventDefault();
+        // Cek apakah ada input yang belum diisi
+
+        
         try {
             const response = await axiosInstance.post('/ticketings/store', formData);
             const id = response.data.ticketing.id;
@@ -319,7 +320,7 @@ const FormTicketing = () => {
                                             <Form.Control type="file" name="file_upload" placeholder="Pilih File" onChange={handleChangeForm} />
                                         </Form.Group>   
 
-                                        {true  ? (
+                                        {isSpkbForm === null ? null : isSpkbForm ? (
                                             <Form.Group className="mb-3" controlId="user_id">
                                                 <Form.Label><strong>Approved to <span className='text-danger'>*</span></strong></Form.Label>
                                                 <Select

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Button, Card, Image, Row, Col, Spinner ,Table, Overlay, Tooltip, Stack } from 'react-bootstrap';
+import { Container, Button, Card, Image, Row, Col ,Table, Overlay, Tooltip, Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Logo from '../../assets/images/gap.png';
 import axiosInstance from '../../axiosConfig';
@@ -9,13 +9,12 @@ import ErrorHandler from '../../Components/ErrorHandler';
 import Loading from '../../Components/Loading';
 import { FaPrint } from "react-icons/fa";
 import { FaDownload } from "react-icons/fa";
-import html2pdf from 'html2pdf.js';
+import html2pdf from 'html2canvas';
 
 
 const DetailFormTicketing = () => {
-    const { ticketId, token } = useParams(); // Ambil nilai ticketId dari URL
+    const { ticketId } = useParams(); // Ambil nilai ticketId dari URL
     const [isLoading, setIsLoading] = useState(true);
-    const [isButtonLoading, setIsButtonLoading] = useState(false);
     const [data , setData] = useState(null);
     const [tooltip,setTooltip] = useState(false);
     const target = useRef(null);
@@ -49,12 +48,13 @@ const DetailFormTicketing = () => {
             } catch (error) {
                 console.error(error);
                 setIsLoading(false); // Move this to the finally block
+                setError(error);
                 console.error(error);
             }
         };
     
         fetchData();
-    }, []);
+    }, [ticketId]);
 
     function maskPhoneNumber(phoneNumber) {
         // Pastikan panjang nomor telepon cukup untuk disensor
