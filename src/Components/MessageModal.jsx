@@ -15,7 +15,7 @@ const MessageModal = ({ show, handleClose, message, error }) => {
                         <strong>Message : </strong>{message}  
                     </Col>
                     <Button
-                        variant='success'
+                        variant={error ? 'danger' : 'success'}
                         className="ms-2 mb-1"
                         onClick={handleClose}
                     >Close</Button>

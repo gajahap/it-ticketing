@@ -23,13 +23,7 @@ const FormTicketing = () => {
     const [isTrackingLoading, setIsTrackingLoading] = useState(false);
     const [isSpkbForm, setIsSpkbForm] = useState(null);
     const [isDateRange, setIsDateRange] = useState(null);
-    const descriptions = [
-        "Pending",
-        // "Tiket telah disetujui oleh kepala bagian",
-        "Tiket telah diproses oleh Rizky",
-        "Selesai",
-        "Closed"
-      ];
+    const [isDetailNull, setDetailNull] = useState(false);
 
     const [formData, setFormData] = useState({
         user_id: '',
@@ -133,16 +127,18 @@ const FormTicketing = () => {
 
     const handleSubmitForm = async (e) => {
         e.preventDefault();
-        // Cek apakah ada input yang belum diisi
-
-        
         try {
             const response = await axiosInstance.post('/ticketings/store', formData);
             const id = response.data.ticketing.id;
             navigate(`/detail-form/${id}`);
             
         } catch (error) {
-            setMessage('Terjadi kesalahan saat mengirim data.');
+            if(error.status === 422){
+                setDetailNull(true);
+                setMessage('Kolom belum terisi seluruhnya, periksa kolom di dalam "Detail".');
+            }else{
+                setMessage('Terjadi kesalahan saat mengirim data.');
+            }
             setError(error);
             console.log(error); 
             console.log(formData);
@@ -306,7 +302,7 @@ const FormTicketing = () => {
                                         </Form.Group>
                                         
                                         {isSpkbForm === null ? null : isSpkbForm ? (
-                                            <SpkbAccordion onDataChange={handleSpkbDataChange} isDateRange={isDateRange}/>
+                                            <SpkbAccordion onDataChange={handleSpkbDataChange} isDateRange={isDateRange} isDetailNull={isDetailNull}/>
                                         ) : (
                                             <Form.Group className="mb-3" controlId="description">
                                             <Form.Label><strong>Note<span className='text-danger'>*</span></strong></Form.Label>

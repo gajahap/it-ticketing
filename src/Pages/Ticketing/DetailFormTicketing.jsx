@@ -9,8 +9,8 @@ import ErrorHandler from '../../Components/ErrorHandler';
 import Loading from '../../Components/Loading';
 import { FaPrint } from "react-icons/fa";
 import { FaDownload } from "react-icons/fa";
-import html2pdf from 'html2canvas';
-
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 const DetailFormTicketing = () => {
     const { ticketId } = useParams(); // Ambil nilai ticketId dari URL
@@ -79,32 +79,23 @@ const DetailFormTicketing = () => {
     };
 
     const navigate = useNavigate();
-      
+    const printRef = useRef();
+
     const handleDownload = () => {
+
         const generatePDF = async () => {
-            const element = document.getElementById('pdfContent');
+            const element = printRef.current;
+            const canvas = await html2canvas(element, { scale: 2 });
+            const dataUrl = canvas.toDataURL("image/png");
 
-            const options = {
-                margin: [10, 10, 10, 10],
-                filename: `Surat-${ticketId}.pdf`,
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: {
-                    scale: 4,
-                    logging: true,
-                    useCORS: true,
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-            };
-
-            try {
-                await html2pdf().from(element).set(options).save();
-            } catch (error) {
-                console.error(error);
-            }
+            const pdf = new jsPDF("landscape", "mm", [canvas.width + 20, canvas.height + 20]);
+            pdf.addImage(dataUrl, "PNG", 10, 10, canvas.width, canvas.height);
+            pdf.save(`document_${data.no_tiket}.pdf`);
         };
 
         generatePDF();
     }
+
     return (
         <>
             {isLoading ? (
@@ -168,14 +159,14 @@ const DetailFormTicketing = () => {
                             </Row>
                             <hr />
                             <p style={{marginBottom:'0', backgroundColor:'wheat', padding:'15px'}}>
-                                <strong>Note: </strong>Request Ticketing Anda berhasil disubmit, cek progress permintaan anda pada halaman <a href="/" target="_blank">Form Ticketing</a> pada bagian <b>Track Progres</b>.
+                                <strong>Note: </strong>Request Ticketing Anda berhasil disubmit, cek progress permintaan anda pada halaman <a href="/" target="_blank">Form Ticketing</a> pada bagian <b>Tracking</b>.
                             </p>
                             <hr />         
 
 
                             {data.jenis_ticketings.is_spkb ? (
                                 <>
-                                <Card className='p-2' id={'pdfContent'}>
+                                <Card className='p-2' ref={printRef}>
                                     <Row className='flex-md-row-reverse'>
                                         <Col lg={4} md={12} sm={12}>
                                             <p style={{ textAlign: 'right', fontSize: '20px',paddingTop:'10%'}} className="text-center">PT. GAJAH ANGKASA PERKASA BANDUNG</p>

@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from '../../../axiosConfig';
 import { useParams } from "react-router-dom";
-import { Container, Button, Card, Image, Row, Col, Spinner ,Table, Overlay, Tooltip, Stack } from 'react-bootstrap';
-
-
+import { Card, Row, Col,Table } from 'react-bootstrap';
 const PrintSurat = () => {
     const { ticketId } = useParams();
     const [data, setData] = useState(null);
-    const [departments, setDepartments] = useState([]);
     const [spkbItems, setSpkbItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [departmentOptions, setDepartmentOptions] = useState([]);
@@ -56,11 +53,11 @@ const PrintSurat = () => {
 
     return (
         <Card className='p-2'>
-        <Row className='flex-md-row-reverse'>
-            <Col lg={4} md={12} sm={12}>
+        <Row className='flex-row-reverse'>
+            <Col lg={4} md={4} sm={4}>
                 <p style={{ textAlign: 'right', fontSize: '20px',paddingTop:'10%'}} className="text-center">PT. GAJAH ANGKASA PERKASA BANDUNG</p>
             </Col>
-            <Col lg={4} md={12} sm={12}>
+            <Col lg={4} md={4} sm={4}>
                 {data.jenis_ticketings.is_daterange ? (
                     <>
                         <h1 className='text-center'>S.P.B</h1>
@@ -76,7 +73,7 @@ const PrintSurat = () => {
                 )} 
 
             </Col>
-            <Col lg={4} md={12} sm={12}>
+            <Col lg={4} md={4} sm={4}>
                 <Table >
                     <tbody>
                         <tr>

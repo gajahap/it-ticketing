@@ -25,7 +25,7 @@ const ContextAwareToggle = ({ children, eventKey, callback }) => {
   );
 };
 
-const SpkbAccordion = ({ onDataChange, isDateRange }) => {
+const SpkbAccordion = ({ onDataChange, isDateRange ,isDetailNull }) => {
   const [spkb, setSpkb] = useState([
     { spkb_barangs_id: '', qty_spkb_item: '', satuan_spkb_item: '', ket_spkb_item: '', start_date: '', end_date: '' },
   ]);
@@ -69,14 +69,15 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
           const filteredData = response.data.filter(item => item.is_peminjaman === true);
           setOptionBarang(filteredData);
         } else {
-          setOptionBarang(response.data);
+          const filteredData = response.data.filter(item => item.is_peminjaman === false);
+          setOptionBarang(filteredData);
         }
       } catch (error) {
         console.error(error);
       }
     };
     fetchDataBarang();
-  }, []);
+  }, [isDateRange]);
 
   const customStyles = {
     control: (base, state) => ({
@@ -117,6 +118,8 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
       ):(
         <h4 className='py-2'>SPKB</h4>
       )}
+      {isDetailNull ? (<p className='text-danger'><i>Masih Ada kolom yang belum di isi pada detail</i></p>) :null}
+
       <Accordion>
         <Stack direction="vertical" gap={2}>
           {spkb.map((item, index) => (
@@ -148,7 +151,7 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
                       name="qty_spkb_item"
                       value={item.qty_spkb_item}
                       placeholder='Qty'
-                      required
+                      
                       style={{ width: '20%' }}
                       onChange={(event) => handleSpkbChange(event, index)}
                     />
@@ -158,7 +161,7 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
                       name="satuan_spkb_item"
                       value={item.satuan_spkb_item}
                       placeholder='Unit'
-                      required
+                      
                       style={{ width: '20%' }}
                       onChange={(event) => handleSpkbChange(event, index)}
                     />
@@ -169,7 +172,7 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
                       placeholder='Keterangan'
                       style={{ width: '60%' }}
                       onChange={(event) => handleSpkbChange(event, index)}
-                      required
+                      
                     />
                   </Stack>
                   {isDateRange? (
@@ -182,7 +185,7 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
                         name="start_date"
                         value={item.start_date}
                         placeholder='Dari Tanggal'
-                        required
+                        
                         style={{ width: '50%' }}
                         onChange={(event) => handleSpkbChange(event, index)}
                       />
@@ -193,7 +196,7 @@ const SpkbAccordion = ({ onDataChange, isDateRange }) => {
                         name="end_date"
                         value={item.end_date}
                         placeholder='Sampai Tanggal'
-                        required
+                        
                         style={{ width: '50%' }}
                         onChange={(event) => handleSpkbChange(event, index)}
                       />
