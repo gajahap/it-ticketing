@@ -56,7 +56,6 @@ const FormTicketing = () => {
     
                 setJenisPermintaan(jenisPermintaanResponse.data);
 
-                console.log(jenisPermintaanResponse.data);
                 
     
                 const formattedApprovedToOptions = approvedToResponse.data.map(option => ({
@@ -117,8 +116,8 @@ const FormTicketing = () => {
             });
             }
         }
+
     };
-      
 
     const handleChangeTracking = (e) => {
         const { name, value } = e.target;
@@ -131,7 +130,6 @@ const FormTicketing = () => {
             const response = await axiosInstance.post('/ticketings/store', formData);
             const id = response.data.ticketing.id;
             navigate(`/detail-form/${id}`);
-            
         } catch (error) {
             if(error.status === 422){
                 setDetailNull(true);
@@ -140,10 +138,6 @@ const FormTicketing = () => {
                 setMessage('Terjadi kesalahan saat mengirim data.');
             }
             setError(error);
-            console.log(error); 
-            console.log(formData);
-
-            
         }
     };
 
@@ -217,7 +211,24 @@ const FormTicketing = () => {
           padding: "10px 20px",
           cursor: "pointer",
         }),
-      };    
+      };
+
+      const handleRadioChange = (e, jenis) => {
+        // Perbarui status form
+        setIsSpkbForm(jenis.is_spkb || false);
+        setIsDateRange(jenis.is_daterange || false);
+    
+        // Perbarui form data
+        handleChangeForm(e);
+    
+        // Reset `spkbData` jika `is_spkb` tidak aktif
+        if (!jenis.is_spkb) {
+            setFormData((prev) => ({
+                ...prev,
+                spkbData: []
+            }));
+        }
+    };
 
     return (
         <>
@@ -284,21 +295,17 @@ const FormTicketing = () => {
                                         <Form.Group className="mb-3" controlId="jenis_ticketings_id">
                                             <Form.Label><strong>Jenis Permintaan <span className='text-danger'>*</span></strong></Form.Label>
                                             {jenisPermintaan && jenisPermintaan.map((jenis) => (
-                                                <Form.Check 
-                                                    key={jenis.id} 
-                                                    type='radio' 
-                                                    name="jenis_ticketings_id" 
-                                                    id={`jenis_ticketings_id${jenis.id}`} 
-                                                    label={jenis.nama_jenis} 
-                                                    value={jenis.id}
-                                                    onChange={(e) => {
-                                                        setIsSpkbForm(jenis.is_spkb);
-                                                        setIsDateRange(jenis.is_daterange);
-                                                        handleChangeForm(e);
-                                                    }}
-                                                    required 
-                                                />
-                                            ))}
+                                                    <Form.Check 
+                                                        key={jenis.id} 
+                                                        type="radio" 
+                                                        name="jenis_ticketings_id" 
+                                                        id={`jenis_ticketings_id${jenis.id}`} 
+                                                        label={jenis.nama_jenis} 
+                                                        value={jenis.id}
+                                                        onChange={(e) => handleRadioChange(e, jenis)}
+                                                        required 
+                                                    />
+                                                ))}
                                         </Form.Group>
                                         
                                         {isSpkbForm === null ? null : isSpkbForm ? (
