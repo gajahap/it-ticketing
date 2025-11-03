@@ -10,6 +10,7 @@ import Select from 'react-select';
 import Elephant from '../../assets/images/elephant.png';
 import CircularProgressBar from '../../Components/CircularProgressBar/CircularProgressBar';
 import Loading from '../../Components/Loading';
+import { showConfirm } from '../../Components/ConfirmToast';
 
 const FormTicketing = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +25,7 @@ const FormTicketing = () => {
     const [isSpkbForm, setIsSpkbForm] = useState(null);
     const [isDateRange, setIsDateRange] = useState(null);
     const [isDetailNull, setDetailNull] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         user_id: '',
@@ -126,9 +128,12 @@ const FormTicketing = () => {
 
     const handleSubmitForm = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
             const response = await axiosInstance.post('/ticketings/store', formData);
             const id = response.data.ticketing.id;
+            setIsSubmitting(false);
+            await showConfirm("Data berhasil disimpan. mohon jangan klik tombol submit berulang-ulang, karena jika berhasil anda akan langsung diarahkan ke halaman detail.", { useCancelButton: false, confirmText : 'OK' });
             navigate(`/detail-form/${id}`);
         } catch (error) {
             if(error.status === 422){
@@ -138,6 +143,8 @@ const FormTicketing = () => {
                 setMessage('Terjadi kesalahan saat mengirim data.');
             }
             setError(error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -337,8 +344,12 @@ const FormTicketing = () => {
                                             </Form.Group>
                                         ):null}
 
-                                        <Button variant="primary" type="submit" className="w-100">
-                                            Submit
+                                        <Button variant="primary" type="submit" className="w-100" disabled={isSubmitting}>
+                                            {isSubmitting ? (
+                                                <Spinner animation="border" role="status" style={{ width: '1rem', height: '1rem' }}>
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </Spinner>
+                                            ) : 'Submit'}
                                         </Button>
                                     </Form>
                                 </Tab>
