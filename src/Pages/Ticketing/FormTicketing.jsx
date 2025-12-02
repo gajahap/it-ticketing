@@ -133,12 +133,21 @@ const FormTicketing = () => {
             const response = await axiosInstance.post('/ticketings/store', formData);
             const id = response.data.ticketing.id;
             setIsSubmitting(false);
-            await showConfirm("Data berhasil disimpan. mohon jangan klik tombol submit berulang-ulang, karena jika berhasil anda akan langsung diarahkan ke halaman detail.", { useCancelButton: false, confirmText : 'OK' });
+            // await showConfirm("Data berhasil disimpan. mohon jangan klik tombol submit berulang-ulang, karena jika berhasil anda akan langsung diarahkan ke halaman detail.", { useCancelButton: false, confirmText : 'OK' });
             navigate(`/detail-form/${id}`);
         } catch (error) {
-            if(error.status === 422){
+            if (error.status === 422) {
+                const errors = error.response?.data?.errors;
+            
+                // Jika error regex pada contact_person
+                if (errors?.contact_person?.some(msg => msg.includes('regex'))) {
+                    setMessage('Kontak Pemohon tidak valid.');
+                } else {
+                    // Error validasi lainnya
+                    setMessage('Kolom belum terisi seluruhnya, periksa kolom di dalam "Detail".');
+                }
+            
                 setDetailNull(true);
-                setMessage('Kolom belum terisi seluruhnya, periksa kolom di dalam "Detail".');
             }else{
                 setMessage('Terjadi kesalahan saat mengirim data.');
             }
