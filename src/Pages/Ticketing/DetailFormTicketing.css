@@ -1,0 +1,20 @@
+.ticket-detail-page {
+font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+
+
+/* Kustomisasi Tabel di dalam Detail Ticket */
+.ticket-detail-page .table th {
+background-color: #f8fafc !important;
+font-size: 12px;
+letter-spacing: 0.5px;
+color: #64748b;
+border-bottom: 2px solid #e2e8f0;
+}
+
+.ticket-detail-page .table td {
+font-size: 14px;
+color: #334155;
+padding: 12px 12px;
+}

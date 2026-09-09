@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Button, Card, Image, Row, Col ,Table, Overlay, Tooltip, Stack } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Container, Button, Card, Image, Row, Col, Table, Overlay, Tooltip, Stack, Badge } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
 import Logo from '../../assets/images/gap.png';
 import axiosInstance from '../../axiosConfig';
-import { useParams } from 'react-router-dom';
 import MessageModal from '../../Components/MessageModal';
 import ErrorHandler from '../../Components/ErrorHandler';
 import Loading from '../../Components/Loading';
-import { FaPrint } from "react-icons/fa";
-import { FaDownload } from "react-icons/fa";
+import { FaPrint, FaDownload, FaCopy, FaCheck, FaArrowLeft, FaTicketAlt } from "react-icons/fa";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import './DetailFormTicketing.css'; // Buat file CSS pendukung jika diperlukan
 
 const DetailFormTicketing = () => {
-    const { ticketId } = useParams(); // Ambil nilai ticketId dari URL
+    const { ticketId } = useParams();
     const [isLoading, setIsLoading] = useState(true);
-    const [data , setData] = useState(null);
-    const [tooltip,setTooltip] = useState(false);
+    const [data, setData] = useState(null);
+    const [copied, setCopied] = useState(false);
     const target = useRef(null);
     const [departmentOptions, setDepartmentOptions] = useState([]);
     const [spkbItems, setSpkbItems] = useState(null);
     const [message, setMessage] = useState(null);
-    const [showModal, setShowModal] = useState(false); // Control for modal visibility
+    const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState(false);
 
     useEffect(() => {
@@ -31,7 +30,6 @@ const DetailFormTicketing = () => {
                     axiosInstance.get(`/ticketings/get/${ticketId}`),
                     axiosInstance.get('/departments'),
                     axiosInstance.get(`/spkb-items/list/${ticketId}`)
-    
                 ]);
                 setData(ticketingResponse.data);
                 
@@ -39,50 +37,37 @@ const DetailFormTicketing = () => {
                     id: option.id,
                     value: option.nama_divisi
                 }));
-                setDepartmentOptions(formattedDepartmentOptions)
-    
+                setDepartmentOptions(formattedDepartmentOptions);
                 setSpkbItems(spkbItmesResponse.data);
-    
-                setIsLoading(false); // Move this to the finally block
-                
-            } catch (error) {
-                console.error(error);
-                setIsLoading(false); // Move this to the finally block
-                setError(error);
-                console.error(error);
+            } catch (err) {
+                console.error(err);
+                setError(err);
+            } finally {
+                setIsLoading(false);
             }
         };
-    
+
         fetchData();
+        
     }, [ticketId]);
 
-    function maskPhoneNumber(phoneNumber) {
-        // Pastikan panjang nomor telepon cukup untuk disensor
+    const maskPhoneNumber = (phoneNumber) => {
         if (!phoneNumber || phoneNumber.length <= 5) return phoneNumber;
-      
-        // Ambil 3 angka pertama dan 2 angka terakhir
         const firstThree = phoneNumber.slice(0, 4);
         const lastTwo = phoneNumber.slice(-2);
-      
-        // Hitung jumlah bintang berdasarkan panjang nomor telepon
         const stars = '*'.repeat(phoneNumber.length - 5);
-      
-        // Gabungkan dengan tanda bintang untuk angka yang disensor
         return `${firstThree}${stars}${lastTwo}`;
-      }
+    };
 
-
- 
-      const handleCloseMessage = () => {
+    const handleCloseMessage = () => {
         setShowModal(false);
-        setMessage(null); // Clear the message when modal closes
+        setMessage(null);
     };
 
     const navigate = useNavigate();
     const printRef = useRef();
 
     const handleDownload = () => {
-
         const generatePDF = async () => {
             const element = printRef.current;
             const canvas = await html2canvas(element, { scale: 2 });
@@ -90,246 +75,286 @@ const DetailFormTicketing = () => {
 
             const pdf = new jsPDF("landscape", "mm", [canvas.width + 20, canvas.height + 20]);
             pdf.addImage(dataUrl, "PNG", 10, 10, canvas.width, canvas.height);
-            pdf.save(`document_${data.no_tiket}.pdf`);
+            pdf.save(`ticket_${data.no_tiket}.pdf`);
         };
-
         generatePDF();
-    }
+    };
+
+    const handleCopyTicketId = () => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(data.no_tiket);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
+
+    console.log(data);
+
 
     return (
         <>
             {isLoading ? (
-                <Loading/>
+                <Loading />
             ) : (
                 <>
-                {error ? (
-                    <ErrorHandler error={error}/>
-                ):(
-                    <div style={{ position: 'relative',height: '100vh'}}>
-                    {/* <ToastCustom /> */}
-                    <div style={{ overflow: 'hidden', position: 'absolute', width: '100%', height: '100%'}}>
-                        <div className="half-circle"></div>
-                    </div>
-                    <Container className="d-flex flex-column justify-content-center align-items-center py-5" style={{ minHeight: '100%' }}>
-                        <Card 
-                            className="p-lg-5 p-4" 
-                            style={{ maxWidth: '1200px', width: '100%', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1)', borderRadius: '15px', border: 'none', marginTop: '20px' }}> 
-                            <Row>
-                                <Col lg={4} md={12} sm={12}>
-                                    <Image
-                                        src={Logo}
-                                        style={{ width: '80px', height: 'auto' }}
-                                    />
-                                </Col>
-                                <Col  lg={4} md={12} sm={12} className='text-lg-center text-md-start text-sm-start align-self-center'>
-                                    <h3>IT Ticketing </h3>
-                                    <p>
-                                        by IT Support PT. Gajah Angkasa Perkasa
-                                    </p>
-                                </Col>
-                                <Col lg={4} md={12} sm={12} className='text-lg-end text-md-start text-sm-start align-self-center'>
-                                    <h2>ID : {data.no_tiket || ''}
-                                        <Button ref={target} className='btn btn-secondary ms-2' onClick={() => {
-                                                if (navigator.clipboard && navigator.clipboard.writeText) {
-                                                // Gunakan Clipboard API jika tersedia
-                                                navigator.clipboard.writeText(data.no_tiket);
-                                                setTooltip(!tooltip);
-                                            } else {
-                                                // Fallback untuk dukungan yang lebih luas
-                                                const textArea = document.createElement("textarea");
-                                                textArea.value = data.no_tiket;
-                                                document.body.appendChild(textArea);
-                                                textArea.select();
-                                                document.execCommand("copy");
-                                                document.body.removeChild(textArea);
-                                                setTooltip(!tooltip);
-                                            }
-                                        }}>
-                                            Salin
-                                        </Button>
-                                        <Overlay target={target.current} show={tooltip} placement="right">
-                                            {(props) => (   
-                                            <Tooltip id="overlay-example" {...props}>
-                                                Tersalin
-                                            </Tooltip>
-                                            )}
-                                        </Overlay>
-                                    </h2>
-                                </Col>
-                            </Row>
-                            <hr />
-                            <p style={{marginBottom:'0', backgroundColor:'wheat', padding:'15px'}}>
-                                <strong>Note: </strong>Request Ticketing Anda berhasil disubmit, cek progress permintaan anda pada halaman <a href="/" target="_blank">Form Ticketing</a> pada bagian <b>Tracking</b>.
-                            </p>
-                            <hr />         
+                    {error ? (
+                        <ErrorHandler error={error} />
+                    ) : (
+                        <div className="ticket-detail-page d-flex flex-column" style={{ minHeight: '100vh', backgroundColor: '#f1f5f9', position: 'relative' }}>
+                            
+                            {/* Header Navigasi Kecil */}
+                            <Container className="pt-4 pb-2">
+                                <Button 
+                                    variant="light" 
+                                    className="d-flex align-items-center gap-2 fw-semibold shadow-sm border-0 px-3 py-2" 
+                                    onClick={() => navigate('/')}
+                                    style={{ borderRadius: '10px', color: '#04419c' }}
+                                >
+                                    <FaArrowLeft size={14} /> Kembali ke Beranda
+                                </Button>
+                            </Container>
 
-
-                            {data.jenis_ticketings.is_spkb ? (
-                                <>
-                                <Card className='p-2' ref={printRef}>
-                                    <Row className='flex-md-row-reverse'>
-                                        <Col lg={4} md={12} sm={12}>
-                                            <p style={{ textAlign: 'right', fontSize: '20px',paddingTop:'10%'}} className="text-center">PT. GAJAH ANGKASA PERKASA BANDUNG</p>
-                                        </Col>
-                                        <Col lg={4} md={12} sm={12}>
-                                            {data.jenis_ticketings.is_daterange ? (
-                                                <>
-                                                    <h1 className='text-center'>S.P.B</h1>
-                                                    <hr />
-                                                    <p className='text-center'>(SURAT PEMINJAMAN BARANG)</p>
-                                                </>
-                                            ):(
-                                                <>
-                                                    <h1 className='text-center'>S.P.K.B</h1>
-                                                    <hr />
-                                                    <p className='text-center'>(SURAT PERMINTAAN KEBUTUHAN BARANG)</p>
-                                                </>
-                                            )} 
-
-                                        </Col>
-                                        <Col lg={4} md={12} sm={12}>
-                                            <Table >
-                                                <tbody>
-                                                    <tr>
-                                                        <td style={{fontWeight:'bold'}}>Tgl:</td>
-                                                        <td>{data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'loading...'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style={{fontWeight:'bold'}}>{data.jenis_ticketings.is_daterange ? 'No. SPB' : 'No. SPKB'}:</td>
-                                                        <td>{data.no_tiket || 'loading...'}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal',fontWeight:'bold' }}>Bag:</td>
-                                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.divisis_id)?.value || 'loading...'}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </Table>
-                                        </Col>
-                                    </Row>
-                                    <hr />
-                                    <div style={{ overflow: 'auto', maxHeight: '300px' }}>
-                                        <Table bordered>
-                                            <thead>
-                                                <tr>
-                                                    <th>No.</th>
-                                                    <th>Banyak Barang</th>
-                                                    <th>Satuan</th>
-                                                    <th>Nama Barang</th>
-                                                    {data.jenis_ticketings.is_daterange ? (
-                                                        <th>Rentang Waktu</th>
-                                                    ):null}
-                                                    <th>Keterangan</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {spkbItems && spkbItems.map((spkbItem, index) => (
-                                                    <tr key={index}>
-                                                        <td>{index + 1}</td>
-                                                        <td>{spkbItem.qty_spkb_item}</td>
-                                                        <td>{spkbItem.satuan_spkb_item}</td>
-                                                        <td>{spkbItem.spkb_barang?.nama_barang}</td>
-                                                        {data.jenis_ticketings.is_daterange ? (
-                                                            <td>{spkbItem.start_date ? `${new Date(spkbItem.start_date).toLocaleString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })} - ${spkbItem.end_date ? new Date(spkbItem.end_date).toLocaleString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}` : ''}</td>
-                                                        ):null}
-                                                        <td>{spkbItem.ket_spkb_item}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </Table>
+                            {/* Main Container */}
+                            <Container className="d-flex flex-column justify-content-center align-items-center py-3 flex-grow-1">
+                                
+                                {/* Info Banner Berhasil */}
+                                <div className="w-100 mb-4" style={{ maxWidth: '850px' }}>
+                                    <div className="alert-success-custom p-3 rounded-4 shadow-sm d-flex align-items-center gap-3 bg-white border-start border-4 border-success">
+                                        <div className="bg-success text-white p-2 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px' }}>
+                                            <FaCheck size={16} />
+                                        </div>
+                                        <div>
+                                            <h6 className="mb-1 fw-bold text-dark">Tiket Berhasil Disubmit!</h6>
+                                            <p className="mb-0 text-muted small">
+                                                Cek progress permintaan Anda kapan saja melalui tab <b>Lacak Tiket</b> di halaman utama.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <Row>
-                                        <Col>
+                                </div>
 
-                                        </Col>
-                                        <Col>
-                                            <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Mengetahui Ka. Bag</p>
-                                            <p style={{ textAlign: 'center',paddingTop:'20%'}}>{data.user && data.user.name}</p>
-                                            <p></p>
-                                        </Col>
-                                        <Col>
-                                            <p style={{ textAlign: 'center',paddingTop:'10%'}} className="text-center">Pemohon,</p>
-                                            <p style={{ textAlign: 'center',paddingTop:'20%'}}>{data.nama_pemohon}</p>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                                <Stack direction='horizontal' className='my-2' gap={1}>
-                                    <Button onClick={() => navigate('/print-surat/' + data.id)}><FaPrint /></Button>
-                                    <Button onClick={handleDownload}><FaDownload /></Button>
-                                </Stack>
-                                </>
-                            ) : (
-                                <Table>
-                                <tbody>
-                                    {/* <tr>
-                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Date</td>
-                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{data.tgl_tiket || 'loading..'}</td>
-                                    </tr> */}
-                                    <tr>
-                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Nama Pemohon</td>
-                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{data.nama_pemohon || 'loading..'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Departments</td>
-                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{departmentOptions.find(option => option.id === data.divisis_id)?.value || 'loading..'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Contact Person</td>
-                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{maskPhoneNumber(data.contact_person) || 'loading..'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Tanggal dibuat</td>
-                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'loading..'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>Jenis Permintaan</td>
-                                        <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>{data.jenis_ticketings?.nama_jenis || 'loading..'}</td> 
-                                    </tr>
-                                    {data.description && (
-                                        <tr>
-                                            <td style={{ width: '35%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
-                                                Keterangan
-                                            </td>
-                                            <td style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>
-                                                {data.description || ''}
-                                            </td>
-                                        </tr>
+                                {/* KARTU UTAMA GAYA TIKET / RECEIPT */}
+                                <Card 
+                                    className="ticket-card border-0 shadow-md p-lg-5 p-4 position-relative overflow-hidden mb-4" 
+                                    style={{ maxWidth: '850px', width: '100%', borderRadius: '24px', backgroundColor: '#ffffff' }}
+                                >
+                                    {/* Hiasan Aksen Sisi Tiket (Opsional, memberikan kesan tiket robek/perforasi) */}
+                                    <div className="ticket-header-brand d-flex justify-content-between align-items-center pb-4 mb-4 border-bottom">
+                                        <div className="d-flex align-items-center gap-3">
+                                            <div className="p-2 rounded-3 bg-light border">
+                                                <Image src={Logo} style={{ width: '45px', height: 'auto' }} />
+                                            </div>
+                                            <div>
+                                                <h5 className="fw-bold mb-0" style={{ color: '#04419c' }}>IT Ticketing System</h5>
+                                                <small className="text-muted">PT. Gajah Angkasa Perkasa</small>
+                                            </div>
+                                        </div>
+                                        <div className="text-end">
+                                            <span className="text-muted d-block small uppercase tracking-wider">ID TIKET</span>
+                                            <div className="d-flex align-items-center gap-2 mt-1">
+                                                <span className="fw-bold fs-5 font-monospace text-dark">{data.no_tiket || '-'}</span>
+                                                <Button 
+                                                    ref={target}
+                                                    variant="outline-primary" 
+                                                    size="sm" 
+                                                    className="rounded-circle p-2 d-flex align-items-center justify-content-center" 
+                                                    style={{ width: '32px', height: '32px' }}
+                                                    onClick={handleCopyTicketId}
+                                                    title="Salin Nomor Tiket"
+                                                >
+                                                    {copied ? <FaCheck size={12} className="text-success" /> : <FaCopy size={12} />}
+                                                </Button>
+                                                <Overlay target={target.current} show={copied} placement="left">
+                                                    {(props) => (
+                                                        <Tooltip id="overlay-copied" {...props}>
+                                                            Tersalin!
+                                                        </Tooltip>
+                                                    )}
+                                                </Overlay>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* KONTEN UTAMA TIKET / SPKB */}
+                                    <div ref={printRef} className="ticket-printable-area bg-white">
+                                        {data.jenis_ticketings.is_spkb ? (
+                                            <div>
+                                                {/* Header Surat SPKB / SPB */}
+                                                <div className="text-center mb-4">
+                                                    <Badge bg="primary" className="mb-2 px-3 py-2 rounded-pill uppercase tracking-wider" style={{ backgroundColor: '#04419c !important' }}>
+                                                        {data.jenis_ticketings.is_daterange ? 'SURAT PEMINJAMAN BARANG (SPB)' : 'SURAT PERMINTAAN KEBUTUHAN BARANG (SPKB)'}
+                                                    </Badge>
+                                                    <h4 className="fw-bold text-uppercase mt-2" style={{ letterSpacing: '0.5px' }}>
+                                                        {data.jenis_ticketings.is_daterange ? 'S.P.B' : 'S.P.K.B'}
+                                                    </h4>
+                                                </div>
+
+                                                {/* Meta Informasi Surat */}
+                                                <Row className="mb-4 bg-light p-3 rounded-4 g-3">
+                                                    <Col md={6}>
+                                                        <div className="small text-muted mb-1">Tanggal Pengajuan</div>
+                                                        <div className="fw-semibold text-dark">
+                                                            {data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { dateStyle: 'full' }) : '-'}
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="small text-muted mb-1">Bagian / Divisi</div>
+                                                        <div className="fw-semibold text-dark">
+                                                            {departmentOptions.find(option => option.id === data.divisis_id)?.value || '-'}
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+
+                                                {/* Tabel Barang */}
+                                                <div className="table-responsive mb-4">
+                                                    <Table hover align="middle" className="align-middle border rounded-3 overflow-hidden">
+                                                        <thead className="table-light text-uppercase fs-7 text-secondary">
+                                                            <tr>
+                                                                <th className="py-3 px-3">No.</th>
+                                                                <th className="py-3">Qty</th>
+                                                                <th className="py-3">Satuan</th>
+                                                                <th className="py-3">Nama Barang</th>
+                                                                {data.jenis_ticketings.is_daterange && <th className="py-3">Rentang Waktu</th>}
+                                                                <th className="py-3">Keterangan</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {spkbItems && spkbItems.map((spkbItem, index) => (
+                                                                <tr key={index}>
+                                                                    <td className="px-3 fw-semibold text-muted">{index + 1}</td>
+                                                                    <td><span className="badge bg-light text-dark border px-2 py-1">{spkbItem.qty_spkb_item}</span></td>
+                                                                    <td>{spkbItem.satuan_spkb_item}</td>
+                                                                    <td className="fw-bold text-dark">{spkbItem.spkb_barang?.nama_barang}</td>
+                                                                    {data.jenis_ticketings.is_daterange && (
+                                                                        <td>
+                                                                            <small className="text-muted bg-white border px-2 py-1 rounded">
+                                                                                {spkbItem.start_date ? `${new Date(spkbItem.start_date).toLocaleDateString('id-ID')} s/d ${spkbItem.end_date ? new Date(spkbItem.end_date).toLocaleDateString('id-ID') : '-'}` : '-'}
+                                                                            </small>
+                                                                        </td>
+                                                                    )}
+                                                                    <td className="text-muted small">{spkbItem.ket_spkb_item || '-'}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </Table>
+                                                </div>
+
+                                                {/* Tanda Tangan / Approver Section */}
+                                                <Row className="mt-5 pt-4 border-top text-center text-md-start g-4">
+                                                    <Col md={6}>
+                                                        <div className="p-3 border rounded-4 bg-light text-center">
+                                                            <p className="text-muted small mb-4">Mengetahui Ka. Bag / Penyetuju</p>
+                                                            <div className="fw-bold text-dark mt-4 pt-3 border-top border-secondary border-opacity-25 d-inline-block px-4">
+                                                                {data.user ? data.user.name : 'Belum Ditentukan'}
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="p-3 border rounded-4 bg-light text-center">
+                                                            <p className="text-muted small mb-4">Pemohon</p>
+                                                            <div className="fw-bold text-dark mt-4 pt-3 border-top border-secondary border-opacity-25 d-inline-block px-4">
+                                                                {data.nama_pemohon}
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        ) : (
+                                            /* Detail Tiket Umum / Non-SPKB */
+                                            <div className="py-2">
+                                                <div className="mb-4">
+                                                    <span className="badge bg-secondary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold">
+                                                        <FaTicketAlt className="me-2" /> {data.jenis_ticketings?.nama_jenis || 'Tiket Umum'}
+                                                    </span>
+                                                </div>
+
+                                                <Row className="g-4 mb-4">
+                                                    <Col md={6}>
+                                                        <div className="p-3 bg-light rounded-4 h-100">
+                                                            <small className="text-muted d-block mb-1">Nama Pemohon</small>
+                                                            <span className="fw-bold text-dark fs-6">{data.nama_pemohon}</span>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="p-3 bg-light rounded-4 h-100">
+                                                            <small className="text-muted d-block mb-1">Divisi / Departemen</small>
+                                                            <span className="fw-bold text-dark fs-6">{departmentOptions.find(option => option.id === data.divisis_id)?.value || '-'}</span>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="p-3 bg-light rounded-4 h-100">
+                                                            <small className="text-muted d-block mb-1">Kontak Person (WhatsApp)</small>
+                                                            <span className="fw-bold text-dark fs-6 font-monospace">{maskPhoneNumber(data.contact_person)}</span>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="p-3 bg-light rounded-4 h-100">
+                                                            <small className="text-muted d-block mb-1">Tanggal Dibuat</small>
+                                                            <span className="fw-bold text-dark fs-6">{data.created_at ? new Date(data.created_at).toLocaleDateString('id-ID', { dateStyle: 'medium' }) : '-'}</span>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+
+                                                {data.description && (
+                                                    <div className="p-4 bg-light rounded-4 mb-4 border">
+                                                        <small className="text-muted d-block fw-bold text-uppercase mb-2" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>Keterangan Kendala / Permintaan</small>
+                                                        <p className="mb-0 text-dark" style={{ whiteSpace: 'pre-line', lineHeight: '1.6' }}>{data.description}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Lampiran Foto jika ada */}
+                                        {data.file_upload && (
+                                            <div className="mt-4 pt-4 border-top">
+                                                <h6 className="fw-bold mb-3 text-secondary">Lampiran File</h6>
+                                                <Card className="p-2 shadow-sm border rounded-4 d-inline-block" style={{ width: '220px' }}>
+                                                    <a href={`https://support.portalgapsoft.xyz${data.file_upload_url}`} target="_blank" rel="noopener noreferrer" className="text-decoration-none text-dark"> 
+                                                        <Card.Img 
+                                                            variant="top" 
+                                                            src={`https://support.portalgapsoft.xyz${data.file_upload_url}`} 
+                                                            style={{ height: '130px', objectFit: 'cover', borderRadius: '10px' }}
+                                                        />
+                                                        <Card.Body className="px-2 py-2 text-center">
+                                                            <small className="text-muted font-monospace" style={{ fontSize: '12px' }}>Lihat File Ukuran Penuh</small>
+                                                        </Card.Body>
+                                                    </a>
+                                                </Card>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Action Buttons Footer di dalam Card */}
+                                    {data.jenis_ticketings.is_spkb && (
+                                        <div className="mt-5 pt-4 border-top d-flex flex-wrap gap-2 justify-content-end">
+                                            <Button 
+                                                variant="outline-primary" 
+                                                className="px-4 py-2 rounded-3 d-flex align-items-center gap-2 fw-semibold"
+                                                onClick={() => navigate('/print-surat/' + data.id)}
+                                            >
+                                                <FaPrint /> Print Dokumen
+                                            </Button>
+                                            <Button 
+                                                variant="primary" 
+                                                className="px-4 py-2 rounded-3 d-flex align-items-center gap-2 fw-semibold"
+                                                style={{ backgroundColor: '#04419c', border: 'none' }}
+                                                onClick={handleDownload}
+                                            >
+                                                <FaDownload /> Download PDF
+                                            </Button>
+                                        </div>
                                     )}
-                                </tbody>
-                            </Table>
-                            )}
 
-                            {data.file_upload_url === null ? (
-                                <>
-                                <Stack gap={3}>
-                                    <strong>Lampiran</strong>
-                                    <Card className="p-2"style={{ width: '300px', height: '200px'}}>
-                                        <a href={`http://192.168.2.40:8000${data.file_upload_url}`} className="text-decoration-none text-dark"> 
-                                            <Card.Img variant="top" src={`http://192.168.2.40:8000${data.file_upload_url}`}  style={{ maxWidth: '100%', height: '30%', objectFit: 'cover' }}
-                                            />
-                                            <Card.Body>
-                                                {data.created_at ? new Date(data.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'loading..'}
-                                            </Card.Body>
-                                        </a>
-                                    </Card>
-                                </Stack>
-                                </>
-                            ):null}
+                                </Card>
+                            </Container>
 
-
-
-
-
-                        </Card>
-                    </Container>
-                    <MessageModal show={showModal} handleClose={handleCloseMessage} message={message}/>
-                    <footer style={{ bottom: 0, width: '100%', padding: '20px 0', textAlign: 'center', background: '#f8f9fa' }}>
-                            <p style={{ margin: 0, fontSize: '14px', color: '#6c757d'}}>© {new Date().getFullYear()} PT.Gajah Angkasa Perkasa. All Rights Reserved.</p>
-                    </footer>
-                </div>
-                )}
-
+                            <MessageModal show={showModal} handleClose={handleCloseMessage} message={message} />
+                            
+                            <footer className="w-100 py-3 text-center bg-white border-top mt-auto">
+                                <p style={{ margin: 0, fontSize: '13px', color: '#6c757d' }}>© {new Date().getFullYear()} PT. Gajah Angkasa Perkasa. All Rights Reserved.</p>
+                            </footer>
+                        </div>
+                    )}
                 </>
-
             )}
         </>
     );

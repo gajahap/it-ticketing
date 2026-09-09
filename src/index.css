@@ -48,6 +48,19 @@ select:focus,textarea:focus,input:focus{
   background-color: #cbcbcb !important;
 }
 
+.btn-outline-primary{
+  border-color: #04419c !important;
+  color: #04419c !important;
+}
+
+.btn-outline-primary:hover{
+  background-color: #04419c !important;
+  color: #fff !important;
+}
+
+.bg-primary{
+  background-color: #04419c !important;
+}
 
 .half-circle {
   position: absolute;
@@ -120,24 +133,6 @@ input::-webkit-inner-spin-button {
 }
 
 
-.custom-tabs .nav-link {
-  color: #04419c; /* Default color */
-  font-weight: 500;
-  padding: 10px 20px;
-  border-radius: 5px;
-  transition: color 0.3s, background-color 0.3s;
-}
-
-.custom-tabs .nav-link.active {
-  color: #fff;
-  background-color: #04419c; /* Active tab color */
-  border-color: #04419c;
-}
-
-.custom-tabs .nav-link:hover {
-  color: #04419c;
-  background-color: #f0f0f0; /* Hover color */
-}
 
 .bg-radiant-top {
   background: linear-gradient(to top, #04419c, #00a1fe);

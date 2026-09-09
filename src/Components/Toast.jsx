@@ -29,8 +29,7 @@ const ToastCustom = () => {
             <Toast.Body>
               <p>Hai, salam hangat. silahkan mengisi <b>"Form"</b> untuk mengajukan tiket, dan pastikan anda mengisi form dengan benar.</p>
               <p>Anda Juga dapat memeriksa progress dari tiket anda pada bagian <b>"Tracking"</b>.</p>
-              <p>Baca buku panduan pada link di bawah ini:</p>
-              <Button onClick={() => navigate('/documentation')}><FaBook /><span className='ms-1'>Dokumentasi</span></Button>
+              {/* <Button onClick={() => navigate('/documentation')}><FaBook /><span className='ms-1'>Dokumentasi</span></Button> */}
             </Toast.Body>
         </Toast>
     </>
